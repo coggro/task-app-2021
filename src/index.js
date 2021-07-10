@@ -14,18 +14,3 @@ app.use(taskRouter)
 app.listen(port, () => {
   console.log(`Server is up on port ${port}.`)
 })
-
-import jsonwebtoken from 'jsonwebtoken'
-
-const demoFunction = async () => {
-  const secret = `dactyl-hedgehog-columnar-bane-alleyway-finish-outclass-fructify`
-  const token = jsonwebtoken.sign({ _id: `abc123` }, secret, {
-    expiresIn: `7 days`,
-  })
-  // console.log(token)
-
-  const data = jsonwebtoken.verify(token, secret)
-  // console.log(data)
-}
-
-demoFunction()
