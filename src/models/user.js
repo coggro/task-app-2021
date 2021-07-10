@@ -1,9 +1,11 @@
+import bcrypt from 'bcrypt'
+import jsonwebtoken from 'jsonwebtoken'
 import mongoose from 'mongoose'
 import validator from 'validator'
 
 import db from '../db/mongoose.js'
 
-const User = db.model(`User`, {
+const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -22,6 +24,7 @@ const User = db.model(`User`, {
     lowercase: true,
     required: true,
     trim: true,
+    unique: true,
     type: String,
     validate(value) {
       if (!validator.isEmail(value)) {
@@ -40,6 +43,55 @@ const User = db.model(`User`, {
       }
     },
   },
+  tokens: [
+    {
+      token: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
 })
+
+userSchema.methods.generateAuthToken = async function () {
+  const user = this
+  const secret = `dactyl-hedgehog-columnar-bane-alleyway-finish-outclass-fructify`
+  const token = jsonwebtoken.sign({ _id: user.id.toString() }, secret)
+
+  // Add the token to the tokens array
+  user.tokens = user.tokens.concat({ token })
+  await user.save()
+
+  return token
+}
+
+userSchema.statics.findByCredentials = async (email, password) => {
+  const user = await User.findOne({ email })
+
+  if (!user) {
+    throw new Error(`Unable to login`)
+  }
+
+  const isMatch = await bcrypt.compare(password, user.password)
+
+  if (!isMatch) {
+    throw new Error(`Unable to login`)
+  }
+
+  return user
+}
+
+// Hash the plaintext password before saving
+userSchema.pre(`save`, async function (next) {
+  const user = this
+
+  if (user.isModified(`password`)) {
+    user.password = await bcrypt.hash(user.password, 8)
+  }
+
+  next()
+})
+
+const User = db.model(`User`, userSchema)
 
 export default User
