@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 
 import db from '../db/mongoose.js'
 
-const Task = db.model(`Task`, {
+const taskSchema = new mongoose.Schema({
   description: {
     required: true,
     trim: true,
@@ -17,6 +17,10 @@ const Task = db.model(`Task`, {
     required: true,
     ref: `User`,
   },
+}, {
+  timestamps: true
 })
+
+const Task = db.model(`Task`, taskSchema)
 
 export default Task
