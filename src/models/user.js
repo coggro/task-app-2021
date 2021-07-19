@@ -6,55 +6,61 @@ import validator from 'validator'
 import Task from './task.js'
 import db from '../db/mongoose.js'
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  age: {
-    default: 0,
-    type: Number,
-    validate(value) {
-      if (value < 0) {
-        throw new Error(`Age must be a positive number`)
-      }
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
     },
-  },
-  email: {
-    lowercase: true,
-    required: true,
-    trim: true,
-    unique: true,
-    type: String,
-    validate(value) {
-      if (!validator.isEmail(value)) {
-        throw new Error(`Email is invalid`)
-      }
-    },
-  },
-  password: {
-    minlength: 7,
-    required: true,
-    trim: true,
-    type: String,
-    validate(value) {
-      if (value.toLowerCase().includes(`password`)) {
-        throw new Error(`Password contains 'password'`)
-      }
-    },
-  },
-  tokens: [
-    {
-      token: {
-        type: String,
-        required: true,
+    age: {
+      default: 0,
+      type: Number,
+      validate(value) {
+        if (value < 0) {
+          throw new Error(`Age must be a positive number`)
+        }
       },
     },
-  ],
-}, {
-  timestamps: true
-})
+    email: {
+      lowercase: true,
+      required: true,
+      trim: true,
+      unique: true,
+      type: String,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error(`Email is invalid`)
+        }
+      },
+    },
+    password: {
+      minlength: 7,
+      required: true,
+      trim: true,
+      type: String,
+      validate(value) {
+        if (value.toLowerCase().includes(`password`)) {
+          throw new Error(`Password contains 'password'`)
+        }
+      },
+    },
+    tokens: [
+      {
+        token: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+    avatar: {
+      type: Buffer,
+    },
+  },
+  {
+    timestamps: true,
+  }
+)
 
 userSchema.virtual(`tasks`, {
   ref: `Task`,
@@ -68,6 +74,7 @@ userSchema.methods.toJSON = function () {
 
   delete userObject.password
   delete userObject.tokens
+  delete userObject.avatar
 
   return userObject
 }
