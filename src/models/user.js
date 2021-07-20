@@ -81,7 +81,7 @@ userSchema.methods.toJSON = function () {
 
 userSchema.methods.generateAuthToken = async function () {
   const user = this
-  const secret = `dactyl-hedgehog-columnar-bane-alleyway-finish-outclass-fructify`
+  const secret = process.env.JWT_SECRET
   const token = jsonwebtoken.sign({ _id: user.id.toString() }, secret)
 
   // Add the token to the tokens array
