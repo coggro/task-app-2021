@@ -4,10 +4,7 @@ import User from '../models/user.js'
 const auth = async (req, res, next) => {
   try {
     const token = req.header(`Authorization`).replace(`Bearer `, ``)
-    const decoded = jsonwebtoken.verify(
-      token,
-      `dactyl-hedgehog-columnar-bane-alleyway-finish-outclass-fructify`
-    )
+    const decoded = jsonwebtoken.verify(token, process.env.JWT_SECRET)
     const user = await User.findOne({ _id: decoded._id, 'tokens.token': token })
 
     if (!user) {
