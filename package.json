@@ -7,7 +7,7 @@
     "start": "node src/index.js",
     "dev": "env-cmd -f ./config/dev.env nodemon src/index.js",
     "test": "env-cmd -f ./config/test.env cross-env NODE_OPTIONS=--experimental-vm-modules jest --watch --verbose --detectOpenHandles",
-    "test-watch": "env-cmd -f ./config/test.env cross-env NODE_OPTIONS=--experimental-vm-modules jest --verbose --detectOpenHandles"
+    "test-watch": "env-cmd -f ./config/test.env cross-env NODE_OPTIONS=--experimental-vm-modules jest --verbose --detectOpenHandles --runInBand --watch"
   },
   "keywords": [],
   "author": "",
